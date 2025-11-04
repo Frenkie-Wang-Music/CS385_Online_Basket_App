@@ -59,6 +59,7 @@ function App() {
   return (
     <>
       <img src={logoBanner} alt="CS385 branding" />
+      <h1>CS385 Online Basket App</h1>
       <h2>We have {inventory.length} items for sale, right now!</h2>
       <p>The product you are chosing is <b>{productChoice}</b> </p>
       <button onClick={() => changeProductCategory("Vegetables")}>
