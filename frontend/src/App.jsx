@@ -32,19 +32,19 @@ function App() {
   }
 
   // This is used by findIndex - it simply checks if the
-  // current object in the array (haystack) has the same pid as the
-  // object passed (needle)
-  function findObjectIndex(needle) {
-    return function (haystack) {
-      return haystack.pid === needle.pid;
+  // current object in the array (arrayObject) has the same pid as the
+  // object passed (input)
+  function findObjectIndex(input) {
+    return function (arrayObject) {
+      return arrayObject.pid === input.pid;
     };
   }
   // This is used by the filter approach to object removal
-  // This tries to find objects in the array (haystack)
-  // that DO NOT have the same pid as the object being searched (needle)
-  function findObjectFilterRemove(needle) {
-    return function (haystack) {
-      return haystack.pid !== needle.pid;
+  // This tries to find objects in the array (arrayObject)
+  // that DO NOT have the same pid as the object being searched (input)
+  function findObjectFilterRemove(input) {
+    return function (arrayObject) {
+      return arrayObject.pid !== input.pid;
     };
   }
 
@@ -157,5 +157,5 @@ function Basket(props) {
     </>
   );
 }
-export default App;
 
+export default App;
