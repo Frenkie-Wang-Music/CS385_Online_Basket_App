@@ -100,7 +100,7 @@ function ShowProductsComponent(props) {
   // a filter function for productCategory
   function productFilter(prod) {
     return function (productsObject) {
-      return productsObject.type === prod;
+      return productsObject.productCategory === prod;
     };
   }
   // use filter to find the number of items for this product
