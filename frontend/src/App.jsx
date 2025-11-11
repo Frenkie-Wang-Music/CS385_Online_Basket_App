@@ -179,22 +179,30 @@ function ShowProductsComponent(props) {
         <h3>
           Our {props.choice} products ({n.length} items)
         </h3>
-
-        {props.inventory
-          .filter(productFilter(props.choice))
-          .sort(props.sorting)
-          .map((p, index) => (
-            <p key={index}>
-              {p.plant.name},€{p.plant.price.toFixed(2)}{" "}
-              <button 
-                className = "btn btn-warning"
-                onClick={() => props.addItemToBasket(p)}
-              >
-                Add to basket
-              </button>
-            </p>
-          ))
-        }
+        <div class = "table-responsive">
+          <table class = "table table-hover table-bordered border-primary table-sm">
+            <tbody>
+              {props.inventory
+                .filter(productFilter(props.choice))
+                .sort(props.sorting)
+                .map((p, index) => (
+                  <tr key={index}>
+                    <td>{p.plant.name}</td>
+                    <td>{p.plant.price.toFixed(2)}</td>
+                    <td>
+                      <button 
+                        className = "btn btn-warning"
+                        onClick={() => props.addItemToBasket(p)}
+                      >
+                        Add to basket
+                      </button>
+                    </td>   
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
       </div>
     </>
   );
