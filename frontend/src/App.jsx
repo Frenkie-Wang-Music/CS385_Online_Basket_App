@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 // for simplicity we use a static array for our shop inventory
 // The data for your inventory could be replaced by an API.
-import { inventory } from "./inventory";
+// import { inventory } from "./inventory";
 import basketPicture from "./images/basket.png";
 import logoBanner from "./images/banner.png";
 
@@ -11,6 +11,38 @@ function App() {
   const [productChoice, setProductChoice] = useState(null);
   // This is our shopping basket array - initially an empty array.
   const [basket, setBasket] = useState([]);
+
+  // the data response from the API – initially empty array
+  const [inventory, setInventory] = useState([]);
+  // a flag to indicate the data is loading – initially false
+  const [loading, setLoading] = useState(false);
+  // a flag to indicate an error, if any – initially null
+  const [error, setError] = useState(null);
+
+  // Here is useEffect for our Organic Shop Inventory
+  useEffect(() => {
+    const URL =
+      "https://raw.githubusercontent.com/Frenkie-Wang-Music/CS385DataSet/refs/heads/main/BasketData/inventory.json";
+
+    async function fetchInventoryData() {
+      try {
+        const response = await fetch(URL);
+        const inventoryDataJson = await response.json(); // wait for the JSON response
+        setLoading(true);
+
+        // IMPORTANT – look at the JSON response – look at the structure
+        // This is where many errors occur!
+        // Check out the JSON in raw format – the array is called 'inventory'
+        setInventory(inventoryDataJson);
+      } catch (e) {
+        setError(e); // take the error message from the system
+        setLoading(false);
+      } // end try-catch block
+    } // end of fetchInventoryData
+
+    fetchInventoryData(); // invoke fetchInventoryData in useEffect
+  }, []); // end of useEffect
+
 
   // Allow for switching between different product categories
   function changeProductCategory(pc) {
@@ -84,80 +116,86 @@ function App() {
     return comparison;
   }
 
-  return (
-    <>
-      <div className = "container-fluid">
-        <img src={logoBanner} className = "img-fluid" alt="CS385 branding" />
-        <h1>CS385 Online Basket App</h1>
-        <h2>We have {inventory.length} items for sale, right now!</h2>
-        <p className = "lead">
-          Welcome to our own online shop at CS385. You can browse our products
-          with buttons below. Happy Shopping! {" "}
-        </p>
-        <p>The product you are chosing is <b>{productChoice}</b> </p>
-        <button 
-          className = "btn btn-primary"
-          onClick={() => changeProductCategory("Vegetables")}
-        >
-          Vegetables
-        </button>
-        &nbsp;
-        <button 
-          className = "btn btn-primary"
-          onClick={() => changeProductCategory("Flowers")}
-        >
-          Flowers
-        </button>
-        &nbsp;
-        <button 
-          className = "btn btn-primary"
-          onClick={() => changeProductCategory("Fruits")}
-        >
-          Fruits
-        </button>
-        &nbsp;
-        <button 
-          className = "btn btn-primary"
-          onClick={() => changeProductCategory(null)}
-        >
-          Reset Choice
-        </button>
-        &nbsp;
-        {basket.length > 0 && (
-          <>
-            <button
-              className = "btn btn-danger"
-              onClick={emptyBasket}
-            >
-              Empty Basket
-            </button>
-          </>
-        )}
+  if (error) {
+    return <h1>Opps! An error has occurred: {error.toString()}</h1>;
+  } else if (loading === false) {
+    return <h1>Waiting for the organic shop inventory data ...... waiting...</h1>;
+  } else {
+    return (
+      <>
+        <div className = "container-fluid">
+          <img src={logoBanner} className = "img-fluid" alt="CS385 branding" />
+          <h1>CS385 Online Basket App</h1>
+          <h2>We have {inventory.length} items for sale, right now!</h2>
+          <p className = "lead">
+            Welcome to our own online shop at CS385. You can browse our products
+            with buttons below. Happy Shopping! {" "}
+          </p>
+          <p>The product you are chosing is <b>{productChoice}</b> </p>
+          <button 
+            className = "btn btn-primary"
+            onClick={() => changeProductCategory("Vegetables")}
+          >
+            Vegetables
+          </button>
+          &nbsp;
+          <button 
+            className = "btn btn-primary"
+            onClick={() => changeProductCategory("Flowers")}
+          >
+            Flowers
+          </button>
+          &nbsp;
+          <button 
+            className = "btn btn-primary"
+            onClick={() => changeProductCategory("Fruits")}
+          >
+            Fruits
+          </button>
+          &nbsp;
+          <button 
+            className = "btn btn-primary"
+            onClick={() => changeProductCategory(null)}
+          >
+            Reset Choice
+          </button>
+          &nbsp;
+          {basket.length > 0 && (
+            <>
+              <button
+                className = "btn btn-danger"
+                onClick={emptyBasket}
+              >
+                Empty Basket
+              </button>
+            </>
+          )}
 
-        <hr />
-        {productChoice && (
-          <ShowProductsComponent
-            inventory={inventory}
-            choice={productChoice}
-            addItemToBasket={addItemToBasket}
-            sorting = {compareName}
-          />
-        )}
-
-        {basket.length > 0 && (
-          <>
-            <Basket 
-              basket={basket} 
-              removeItemFromBasket={removeItemFromBasket}
-              sorting = {comparePriceAsc}
+          <hr />
+          {productChoice && (
+            <ShowProductsComponent
+              inventory={inventory}
+              choice={productChoice}
+              addItemToBasket={addItemToBasket}
+              sorting = {compareName}
             />
-          </>
-        )}
-        <br /> <br />
-        <img src={logoBanner} alt="CS385 branding" />
-      </div>
-    </>
-  );
+          )}
+
+          {basket.length > 0 && (
+            <>
+              <Basket 
+                basket={basket} 
+                removeItemFromBasket={removeItemFromBasket}
+                sorting = {comparePriceAsc}
+              />
+            </>
+          )}
+          <br /> <br />
+          <img src={logoBanner} alt="CS385 branding" />
+        </div>
+      </>
+    );
+  }
 }
 
 /* This is the ShowProductsComponent 
