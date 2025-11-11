@@ -55,7 +55,35 @@ function App() {
     setBasket([...basket.slice(0, n), ...basket.slice(n + 1, basket.length)]);
     //setBasket(basket.filter(findObjectFilterRemove(item)));
   }
- 
+
+  // compare product items based on their price.
+  // we want ASCENDING ORDER
+  function comparePriceAsc(objA, objB) {
+    let comparison = 0;
+
+    if (objA.plant.price > objB.plant.price) comparison = 1;
+    else if (objA.plant.price < objB.plant.price) comparison = -1;
+    else comparison = 0;
+
+    return comparison;
+  }
+
+  // compare function for the NAMES of plants
+  // ascending - alphabetical order.
+  // Javascript will figure out the alphabetical ordering in the event
+  // of a tie or equal letters.
+  function compareName(objA, objB) {
+    let comparison = 0;
+    let objAStr = objA.plant.name.toLowerCase();
+    let objBStr = objB.plant.name.toLowerCase();
+
+    if (objAStr > objBStr) comparison = 1;
+    else if (objAStr < objBStr) comparison = -1;
+    else comparison = 0;
+
+    return comparison;
+  }
+
   return (
     <>
       <div className = "container-fluid">
@@ -112,12 +140,17 @@ function App() {
             inventory={inventory}
             choice={productChoice}
             addItemToBasket={addItemToBasket}
+            sorting = {compareName}
           />
         )}
 
         {basket.length > 0 && (
           <>
-            <Basket basket={basket} removeItemFromBasket={removeItemFromBasket}/>
+            <Basket 
+              basket={basket} 
+              removeItemFromBasket={removeItemFromBasket}
+              sorting = {comparePriceAsc}
+            />
           </>
         )}
         <br /> <br />
@@ -147,17 +180,21 @@ function ShowProductsComponent(props) {
           Our {props.choice} products ({n.length} items)
         </h3>
 
-        {props.inventory.filter(productFilter(props.choice)).map((p, index) => (
-          <p key={index}>
-            {p.plant.name},€{p.plant.price.toFixed(2)}{" "}
-            <button 
-              className = "btn btn-warning"
-              onClick={() => props.addItemToBasket(p)}
-            >
-              Add to basket
-            </button>
-          </p>
-        ))}
+        {props.inventory
+          .filter(productFilter(props.choice))
+          .sort(props.sorting)
+          .map((p, index) => (
+            <p key={index}>
+              {p.plant.name},€{p.plant.price.toFixed(2)}{" "}
+              <button 
+                className = "btn btn-warning"
+                onClick={() => props.addItemToBasket(p)}
+              >
+                Add to basket
+              </button>
+            </p>
+          ))
+        }
       </div>
     </>
   );
@@ -184,7 +221,7 @@ function Basket(props) {
         <p>
           <b>Total cost: €{props.basket.reduce(getBasketTotal, 0)}</b>
         </p>
-        {props.basket.map((p, index) => (
+        {props.basket.sort(props.sorting).map((p, index) => (
           <p key={index}>
             {p.plant.name},€{p.plant.price.toFixed(2)}{" "}
             <button 
