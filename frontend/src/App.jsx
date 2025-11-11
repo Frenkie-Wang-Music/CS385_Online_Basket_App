@@ -3,7 +3,6 @@ import React, { useState } from "react";
 // for simplicity we use a static array for our shop inventory
 // The data for your inventory could be replaced by an API.
 import { inventory } from "./inventory";
-
 import basketPicture from "./images/basket.png";
 import logoBanner from "./images/banner.png";
 
@@ -39,6 +38,7 @@ function App() {
       return arrayObject.pid === input.pid;
     };
   }
+  
   // This is used by the filter approach to object removal
   // This tries to find objects in the array (arrayObject)
   // that DO NOT have the same pid as the object being searched (input)
@@ -55,42 +55,74 @@ function App() {
     setBasket([...basket.slice(0, n), ...basket.slice(n + 1, basket.length)]);
     //setBasket(basket.filter(findObjectFilterRemove(item)));
   }
-
+ 
   return (
     <>
-      <img src={logoBanner} alt="CS385 branding" />
-      <h1>CS385 Online Basket App</h1>
-      <h2>We have {inventory.length} items for sale, right now!</h2>
-      <p>The product you are chosing is <b>{productChoice}</b> </p>
-      <button onClick={() => changeProductCategory("Vegetables")}>
-        Vegetables
-      </button>
-      &nbsp;
-      <button onClick={() => changeProductCategory("Flowers")}>Flowers</button>
-      &nbsp;
-      <button onClick={() => changeProductCategory("Fruits")}>Fruits</button>
-      &nbsp;
-      <button onClick={() => changeProductCategory(null)}>Reset Choice</button>
-      &nbsp;
-      {basket.length > 0 && (
-        <>
-          <button onClick={emptyBasket}>Empty Basket</button>
-        </>
-      )}
-      {productChoice && (
-        <ShowProductsComponent
-          inventory={inventory}
-          choice={productChoice}
-          addItemToBasket={addItemToBasket}
-        />
-      )}
-      {basket.length > 0 && (
-        <>
-          <Basket basket={basket} removeItemFromBasket={removeItemFromBasket} />
-        </>
-      )}
-      <br /> <br />
-      <img src={logoBanner} alt="CS385 branding" />
+      <div className = "container-fluid">
+        <img src={logoBanner} className = "img-fluid" alt="CS385 branding" />
+        <h1>CS385 Online Basket App</h1>
+        <h2>We have {inventory.length} items for sale, right now!</h2>
+        <p className = "lead">
+          Welcome to our own online shop at CS385. You can browse our products
+          with buttons below. Happy Shopping! {" "}
+        </p>
+        <p>The product you are chosing is <b>{productChoice}</b> </p>
+        <button 
+          className = "btn btn-primary"
+          onClick={() => changeProductCategory("Vegetables")}
+        >
+          Vegetables
+        </button>
+        &nbsp;
+        <button 
+          className = "btn btn-primary"
+          onClick={() => changeProductCategory("Flowers")}
+        >
+          Flowers
+        </button>
+        &nbsp;
+        <button 
+          className = "btn btn-primary"
+          onClick={() => changeProductCategory("Fruits")}
+        >
+          Fruits
+        </button>
+        &nbsp;
+        <button 
+          className = "btn btn-primary"
+          onClick={() => changeProductCategory(null)}
+        >
+          Reset Choice
+        </button>
+        &nbsp;
+        {basket.length > 0 && (
+          <>
+            <button
+              className = "btn btn-danger"
+              onClick={emptyBasket}
+            >
+              Empty Basket
+            </button>
+          </>
+        )}
+
+        <hr />
+        {productChoice && (
+          <ShowProductsComponent
+            inventory={inventory}
+            choice={productChoice}
+            addItemToBasket={addItemToBasket}
+          />
+        )}
+
+        {basket.length > 0 && (
+          <>
+            <Basket basket={basket} removeItemFromBasket={removeItemFromBasket}/>
+          </>
+        )}
+        <br /> <br />
+        <img src={logoBanner} alt="CS385 branding" />
+      </div>
     </>
   );
 }
@@ -110,19 +142,23 @@ function ShowProductsComponent(props) {
 
   return (
     <>
-      <hr />
-      <h3>
-        Our {props.choice} products ({n.length} items)
-      </h3>
+      <div className = "alert alert-info" role = "alert">
+        <h3>
+          Our {props.choice} products ({n.length} items)
+        </h3>
 
-      {props.inventory.filter(productFilter(props.choice)).map((p, index) => (
-        <p key={index}>
-          {p.plant.name},€{p.plant.price.toFixed(2)}{" "}
-          <button onClick={() => props.addItemToBasket(p)}>
-            Add to basket
-          </button>
-        </p>
-      ))}
+        {props.inventory.filter(productFilter(props.choice)).map((p, index) => (
+          <p key={index}>
+            {p.plant.name},€{p.plant.price.toFixed(2)}{" "}
+            <button 
+              className = "btn btn-warning"
+              onClick={() => props.addItemToBasket(p)}
+            >
+              Add to basket
+            </button>
+          </p>
+        ))}
+      </div>
     </>
   );
 } // end of ShowProductsComponent
@@ -130,7 +166,6 @@ function ShowProductsComponent(props) {
 // This is the Basket component.
 // This component deals with the display of the current
 // shopping basket.
-
 function Basket(props) {
   // create a call back for the reduce function
   // note how we access the price of each object.
@@ -140,21 +175,27 @@ function Basket(props) {
 
   return (
     <>
-      <hr />
-      <h3>Your shopping basket</h3>
-      <img alt="shopping basket" src={basketPicture} />
-      <p>
-        Your basket has <b>{props.basket.length}</b> items
-      </p>
-      <p>
-        <b>Total cost: €{props.basket.reduce(getBasketTotal, 0)}</b>
-      </p>
-      {props.basket.map((p, index) => (
-        <p key={index}>
-          {p.plant.name},€{p.plant.price.toFixed(2)}{" "}
-          <button onClick={() => props.removeItemFromBasket(p)}>Remove</button>
+      <div className = "alert alert-secondary" role = "alert">
+        <h3>Your shopping basket</h3>
+        <img alt="shopping basket" src={basketPicture} />
+        <p>
+          Your basket has <b>{props.basket.length}</b> items
         </p>
-      ))}
+        <p>
+          <b>Total cost: €{props.basket.reduce(getBasketTotal, 0)}</b>
+        </p>
+        {props.basket.map((p, index) => (
+          <p key={index}>
+            {p.plant.name},€{p.plant.price.toFixed(2)}{" "}
+            <button 
+              className = "btn btn-info"
+              onClick={() => props.removeItemFromBasket(p)}
+            >
+              Remove
+            </button>
+          </p>
+        ))}
+      </div>
     </>
   );
 }
