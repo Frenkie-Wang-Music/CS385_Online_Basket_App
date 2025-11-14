@@ -45,8 +45,9 @@ function App() {
 
 
   // Allow for switching between different product categories
-  function changeProductCategory(pc) {
-    setProductChoice(pc);
+  function changeProductCategoryFromDropDown(e) {
+    if (e.target.value === "Reset") setProductChoice(null);
+    else setProductChoice(e.target.value);
   }
 
   // add an item (object) to the shopping basket array
@@ -131,34 +132,33 @@ function App() {
             Welcome to our own online shop at CS385. You can browse our products
             with buttons below. Happy Shopping! {" "}
           </p>
-          <p>The product you are chosing is <b>{productChoice}</b> </p>
-          <button 
-            className = "btn btn-primary"
-            onClick={() => changeProductCategory("Vegetables")}
-          >
-            Vegetables
-          </button>
-          &nbsp;
-          <button 
-            className = "btn btn-primary"
-            onClick={() => changeProductCategory("Flowers")}
-          >
-            Flowers
-          </button>
-          &nbsp;
-          <button 
-            className = "btn btn-primary"
-            onClick={() => changeProductCategory("Fruits")}
-          >
-            Fruits
-          </button>
-          &nbsp;
-          <button 
-            className = "btn btn-primary"
-            onClick={() => changeProductCategory(null)}
-          >
-            Reset Choice
-          </button>
+          <form>
+            <label for="productlist" class="form-label">
+              Browse our shop!
+            </label>
+
+            <select
+              onChange={changeProductCategoryFromDropDown}
+              class="form-control"
+              id="productlist"
+            >
+              <option selected value="Reset">
+                Choose a product category
+              </option>
+              <option value="Flowers">
+                Flowers
+              </option>
+              <option value="Fruits">
+                Fruits
+              </option>
+              <option value="Vegetables">
+                Vegetables
+              </option>
+              <option value="Reset">
+                Reset my choice
+              </option>
+            </select>
+          </form>
           &nbsp;
           {basket.length > 0 && (
             <>
